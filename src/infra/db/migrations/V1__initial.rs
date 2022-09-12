@@ -3,7 +3,7 @@ use barrel::{types, Migration};
 
 pub fn migration() -> String {
     let mut m = Migration::new();
-    println!("Applying: {}", file!());
+    // println!("Applying: {}", file!());
 
     m.create_table("short_urls", |t| {
         t.add_column("id", types::varchar(6));

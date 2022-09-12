@@ -45,7 +45,15 @@ async fn main() -> color_eyre::Result<()> {
 
     println!("Starting migrations...");
 
-    runner.run_async(&mut conn).await?;
+    let report = runner.run_async(&mut conn).await?;
+
+    for migration in report.applied_migrations() {
+        println!(
+            "Migration Applied - Name: {}, Version: {}",
+            migration.name(),
+            migration.version()
+        );
+    }
 
     println!("Finished migrations...");
 
