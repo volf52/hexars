@@ -16,12 +16,12 @@ impl ShortUrl {
     pub fn new(url: String) -> Result<Self, ShortUrlError> {
         let id = gen_id();
 
-        ShortUrl::validate_url(&url)?;
+        Self::validate_url(&url)?;
 
         Ok(Self { id, url })
     }
 
-    pub fn from(id: String, url: String) -> Self {
+    pub const fn from(id: String, url: String) -> Self {
         Self { id, url }
     }
 

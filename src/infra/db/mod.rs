@@ -17,7 +17,7 @@ pub async fn init_db() -> color_eyre::Result<()> {
         .connect(&db_url)
         .await?;
 
-    POOL.set(pool).unwrap();
+    POOL.set(pool).expect("unable to set POOL");
 
     Ok(())
 }

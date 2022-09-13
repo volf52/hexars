@@ -9,7 +9,7 @@ pub struct ShortUrlRepoSqlx;
 #[async_trait::async_trait]
 impl ShortUrlRepo for ShortUrlRepoSqlx {
     async fn fetch_all(&self) -> Vec<ShortUrl> {
-        let pool = crate::infra::db::POOL.get().unwrap();
+        let pool = crate::infra::db::POOL.get().expect("POOL must be there");
 
         let res = sqlx::query!(
             "
@@ -31,7 +31,7 @@ impl ShortUrlRepo for ShortUrlRepoSqlx {
     }
 
     async fn insert(&self, ent: &ShortUrl) -> ShortUrl {
-        let pool = crate::infra::db::POOL.get().unwrap();
+        let pool = crate::infra::db::POOL.get().expect("POOL not set");
 
         sqlx::query!(
             "

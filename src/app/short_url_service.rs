@@ -1,18 +1,19 @@
 use crate::domain::short_url_entity::{ShortUrl, ShortUrlRepo};
 
-pub struct ShortUrlServ<'a> {
-    repo: &'a dyn ShortUrlRepo,
+pub struct ShortUrlServ {
+    repo: Box<dyn ShortUrlRepo + Sync + Send>,
 }
 
-impl<'a> ShortUrlServ<'a> {
-    pub fn new(repo: &'a dyn ShortUrlRepo) -> Self {
+impl ShortUrlServ {
+    #[must_use]
+    pub fn new(repo: Box<dyn ShortUrlRepo + Sync + Send>) -> Self {
         Self { repo }
     }
 
     pub async fn create_short_url(&self, url: String) -> anyhow::Result<ShortUrl> {
         let ent = ShortUrl::new(url)?;
 
-        self.repo.insert(&ent).await;
+        let _insert_res = self.repo.insert(&ent).await;
 
         Ok(ent)
     }
