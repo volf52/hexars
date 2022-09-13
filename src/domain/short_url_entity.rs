@@ -1,6 +1,6 @@
 use super::base::{gen_id, BaseEntity};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ShortUrl {
     id: String,
     url: String,
@@ -21,6 +21,10 @@ impl ShortUrl {
         Ok(Self { id, url })
     }
 
+    pub fn from(id: String, url: String) -> Self {
+        Self { id, url }
+    }
+
     pub fn url(&self) -> String {
         self.url.clone()
     }
@@ -28,15 +32,25 @@ impl ShortUrl {
     fn validate_url(url: &str) -> Result<(), ShortUrlError> {
         url::Url::parse(url)
             .map(|_| ())
-            .map_err(|e| ShortUrlError::InvalidUrl(url.to_string()))
+            .map_err(|_| ShortUrlError::InvalidUrl(url.to_string()))
     }
 }
 
 // ---------- Exceptions --------
-#[derive(Debug, thiserror::Error, PartialEq)]
+#[derive(Debug, thiserror::Error, PartialEq, Eq)]
 pub enum ShortUrlError {
     #[error("URL is not valid <{0}>")]
     InvalidUrl(String),
+    #[error("Error hydrating from data source")]
+    HydrationError,
+}
+
+// ----- Repo ------
+#[async_trait::async_trait]
+pub trait ShortUrlRepo {
+    async fn fetch_all(&self) -> Vec<ShortUrl>;
+    // fn fetch_by_id(&self, id: String) -> anyhow::Result<ShortUrl>;
+    async fn insert(&self, ent: &ShortUrl) -> ShortUrl;
 }
 
 #[cfg(test)]
