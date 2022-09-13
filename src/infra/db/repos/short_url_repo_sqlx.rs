@@ -3,7 +3,7 @@ use crate::domain::{
     short_url_entity::{ShortUrl, ShortUrlRepo},
 };
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct ShortUrlRepoSqlx;
 
 #[async_trait::async_trait]

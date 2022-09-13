@@ -4,7 +4,7 @@
 pub mod app;
 mod domain;
 pub mod errors;
-mod infra;
+pub mod infra;
 mod web;
 
 pub use infra::db;
