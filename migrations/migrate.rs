@@ -4,6 +4,8 @@ use url::Url;
 
 #[tokio::main]
 async fn main() -> color_eyre::Result<()> {
+    // let migrations_path = "migrations";
+    // println!("cargo:rerun-if-changed={migrations_path}");
     color_eyre::install()?;
 
     dotenv::dotenv()?;
