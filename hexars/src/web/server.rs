@@ -9,7 +9,7 @@ async fn main() -> color_eyre::Result<()> {
     init_db().await?;
 
     let container = di::Container::init();
-    let serv = container.short_url;
+    let serv = &container.short_url;
 
     let e = serv
         .create_short_url("https://www.facebook.com".to_string())
@@ -18,7 +18,7 @@ async fn main() -> color_eyre::Result<()> {
 
     println!("Inserted: {:#?}", e);
 
-    let ents = serv.get_all_urls().await;
+    let ents = &container.short_url.get_all_urls().await;
 
     println!("All: {:#?}", ents);
 

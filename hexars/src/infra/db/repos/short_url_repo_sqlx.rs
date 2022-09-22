@@ -1,5 +1,5 @@
 use crate::domain::{
-    base::BaseEntity,
+    base::{BaseEntity, BaseRepo},
     short_url_entity::{ShortUrl, ShortUrlRepo},
 };
 
@@ -7,8 +7,10 @@ use crate::domain::{
 pub struct ShortUrlRepoSqlx;
 
 #[async_trait::async_trait]
-impl ShortUrlRepo for ShortUrlRepoSqlx {
-    async fn fetch_all(&self) -> Vec<ShortUrl> {
+impl BaseRepo for ShortUrlRepoSqlx {
+    type Entity = ShortUrl;
+
+    async fn fetch_all(&self) -> Vec<Self::Entity> {
         let pool = crate::infra::db::POOL.get().expect("POOL must be there");
 
         let res = sqlx::query!(
@@ -30,15 +32,17 @@ impl ShortUrlRepo for ShortUrlRepoSqlx {
         results
     }
 
-    async fn insert(&self, ent: &ShortUrl) -> ShortUrl {
+    async fn insert(&self, ent: &Self::Entity) -> Self::Entity {
         let pool = crate::infra::db::POOL.get().expect("POOL not set");
+        let id = ent.id();
+        let url = ent.url();
 
         sqlx::query!(
             "
             INSERT INTO short_urls (id, url) VALUES ($1, $2)
             ",
-            ent.id(),
-            ent.url()
+            id,
+            url
         )
         .execute(pool)
         .await
@@ -51,3 +55,5 @@ impl ShortUrlRepo for ShortUrlRepoSqlx {
     //     todo!()
     // }
 }
+
+impl ShortUrlRepo for ShortUrlRepoSqlx {}

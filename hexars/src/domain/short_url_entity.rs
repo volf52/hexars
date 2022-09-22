@@ -1,4 +1,4 @@
-use super::base::{gen_id, BaseEntity};
+use super::base::{gen_id, BaseEntity, BaseRepo};
 
 #[derive(Debug, Clone)]
 pub struct ShortUrl {
@@ -46,12 +46,14 @@ pub enum ShortUrlError {
 }
 
 // ----- Repo ------
+// #[async_trait::async_trait]
+// pub trait ShortUrlRepo {
+//     async fn fetch_all(&self) -> Vec<ShortUrl>;
+//     // fn fetch_by_id(&self, id: String) -> anyhow::Result<ShortUrl>;
+//     async fn insert(&self, ent: &ShortUrl) -> ShortUrl;
+// }
 #[async_trait::async_trait]
-pub trait ShortUrlRepo {
-    async fn fetch_all(&self) -> Vec<ShortUrl>;
-    // fn fetch_by_id(&self, id: String) -> anyhow::Result<ShortUrl>;
-    async fn insert(&self, ent: &ShortUrl) -> ShortUrl;
-}
+pub trait ShortUrlRepo: BaseRepo {}
 
 #[cfg(test)]
 mod tests {

@@ -1,9 +1,8 @@
-use barrel::backend::Pg;
-use barrel::{types, Migration};
+use barrel::{backend::Sqlite, types, Migration};
 
 pub fn migration() -> String {
     let mut m = Migration::new();
-    // println!("Applying: {}", file!());
+    println!("Applying: {}", file!());
 
     m.create_table("short_urls", |t| {
         t.add_column("id", types::varchar(6));
@@ -12,5 +11,5 @@ pub fn migration() -> String {
         t.set_primary_key(&["id"]);
     });
 
-    m.make::<Pg>()
+    m.make::<Sqlite>()
 }
