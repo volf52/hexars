@@ -57,21 +57,24 @@ COPY --from=hexars /app/target/x86_64-unknown-linux-musl/release/server .
 RUN ./upx --best --lzma -o server_minimal server
 
 # ----------- Production --------------
+FROM volf52/tini:1.1 as tini
 
 # FROM gcr.io/distroless/static:nonroot AS runtime
 FROM scratch as runtime
 
 WORKDIR /app
+EXPOSE 3000
+
+# COPY --from=tini --chown=nonroot:nonroot /bin/tini /bin/tini
+COPY --from=tini /bin/tini /bin/tini
 
 # COPY --from=migrate --chown=nonroot:nonroot /app/db.sqlite .
 COPY --from=migrate /app/db.sqlite .
 
-# COPY --from=hexars --chown=nonroot:nonroot /app/target/x86_64-unknown-linux-musl/release/server .
-# COPY --from=hexars /app/target/x86_64-unknown-linux-musl/release/server .
+# COPY --from=compress --chown=nonroot:nonroot /app/server_minimal ./server
 COPY --from=compress /app/server_minimal ./server
 
 # COPY --chown=nonroot:nonroot .env .
 COPY  .env .
 
-
-ENTRYPOINT ["/app/server"]
+ENTRYPOINT ["/bin/tini", "--","/app/server"]
