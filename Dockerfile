@@ -45,6 +45,17 @@ COPY hexars .
 
 RUN cargo b -r --target x86_64-unknown-linux-musl
 
+# ---- Minimize size ----
+FROM volf52/upx-minimal:latest as upx-source
+
+# Need this to utilize RUN, as it isn't present in scratch images like upx-minimal
+FROM base as compress
+
+COPY --from=upx-source /bin/upx .
+COPY --from=hexars /app/target/x86_64-unknown-linux-musl/release/server .
+
+RUN ./upx --best --lzma -o server_minimal server
+
 # ----------- Production --------------
 
 # FROM gcr.io/distroless/static:nonroot AS runtime
@@ -56,7 +67,8 @@ WORKDIR /app
 COPY --from=migrate /app/db.sqlite .
 
 # COPY --from=hexars --chown=nonroot:nonroot /app/target/x86_64-unknown-linux-musl/release/server .
-COPY --from=hexars /app/target/x86_64-unknown-linux-musl/release/server .
+# COPY --from=hexars /app/target/x86_64-unknown-linux-musl/release/server .
+COPY --from=compress /app/server_minimal ./server
 
 # COPY --chown=nonroot:nonroot .env .
 COPY  .env .
