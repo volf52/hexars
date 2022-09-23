@@ -5,12 +5,23 @@ WORKDIR /app
 
 RUN cargo install cargo-chef
 
+# ------ Recipes -----
+
 FROM base as migrate-recipe
 
 COPY migrations .
 
 RUN cargo chef prepare --recipe-path recipe.json
 
+FROM base as hexars-recipe
+
+COPY hexars .
+
+RUN cargo chef prepare --recipe-path recipe.json
+
+# ------- Builds ----------
+
+# Not separating the steps to dep and build, as it will add an unnecessary lookup of crates.io index
 FROM base as migrate
 
 COPY --from=migrate-recipe /app/recipe.json .
@@ -21,11 +32,6 @@ COPY migrations .
 
 RUN cargo build --target x86_64-unknown-linux-musl && /app/target/x86_64-unknown-linux-musl/debug/migrate
 
-FROM base as hexars-recipe
-
-COPY hexars .
-
-RUN cargo chef prepare --recipe-path recipe.json
 
 FROM base as hexars
 
@@ -38,6 +44,8 @@ COPY .env .
 COPY hexars .
 
 RUN cargo b -r --target x86_64-unknown-linux-musl
+
+# ----------- Production --------------
 
 # FROM gcr.io/distroless/static:nonroot AS runtime
 FROM scratch as runtime
