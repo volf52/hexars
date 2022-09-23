@@ -534,12 +534,10 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
- "barrel",
  "color-eyre",
  "dotenv",
  "nanoid",
  "once_cell",
- "refinery",
  "serde",
  "serde_json",
  "sqlx",
