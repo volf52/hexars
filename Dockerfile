@@ -46,7 +46,7 @@ COPY hexars .
 RUN cargo b -r --target x86_64-unknown-linux-musl
 
 # ---- Minimize size ----
-FROM volf52/upx-minimal:latest as upx-source
+FROM volf52/upx-minimal:1.0 as upx-source
 
 # Need this to utilize RUN, as it isn't present in scratch images like upx-minimal
 FROM base as compress
