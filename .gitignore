@@ -3,3 +3,5 @@
 refinery.toml
 .idea
 .vscode
+db.sqlite
+
