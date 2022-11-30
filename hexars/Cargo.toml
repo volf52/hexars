@@ -12,15 +12,6 @@ path = "src/lib.rs"
 name = "server"
 path = "src/web/server.rs"
 
-[profile.release]
-lto = "fat"
-strip = true
-codegen-units = 1
-incremental = false
-opt-level = 3
-panic = "abort"
-overflow-checks = true
-build-override = { opt-level = 0 }
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]

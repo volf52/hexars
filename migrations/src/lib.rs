@@ -1,8 +1,10 @@
 mod migration_files;
 
-use refinery::embed_migrations;
+pub mod embedded {
+    use refinery::embed_migrations;
 
-embed_migrations!("src/migration_files");
+    embed_migrations!("./src/migration_files");
+}
 
 // #[derive(Debug, Error)]
 // pub enum ConfigError {

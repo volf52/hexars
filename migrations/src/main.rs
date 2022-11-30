@@ -1,10 +1,10 @@
-use migrations::migrations::runner;
+use migrations::embedded;
 use rusqlite::Connection;
 
 fn main() {
     let mut c = Connection::open("./db.sqlite").unwrap();
 
-    let runner = runner();
+    let runner = embedded::migrations::runner();
 
     println!("Starting migrations...");
 

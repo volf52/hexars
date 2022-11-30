@@ -11,3 +11,10 @@ opt-level = 3
 panic = "abort"
 overflow-checks = true
 build-override = { opt-level = 0 }
+
+[profile.release.package.hexars]
+# strip = true
+# codegen-units = 1
+# incremental = false
+# opt-level = 3
+# overflow-checks = true
