@@ -53,7 +53,15 @@ pub enum ShortUrlError {
 //     async fn insert(&self, ent: &ShortUrl) -> ShortUrl;
 // }
 #[async_trait::async_trait]
-pub trait ShortUrlRepo: BaseRepo {}
+pub trait IShortUrlRepo: BaseRepo {}
+
+pub type ShortUrlRepo = Box<dyn IShortUrlRepo<Entity = ShortUrl> + Sync + Send>;
+
+impl std::fmt::Debug for ShortUrlRepo {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        todo!()
+    }
+}
 
 #[cfg(test)]
 mod tests {

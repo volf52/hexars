@@ -1,14 +1,13 @@
 use crate::domain::short_url_entity::{ShortUrl, ShortUrlRepo};
 
-type Repo = Box<dyn ShortUrlRepo<Entity = ShortUrl> + Sync + Send>;
-
+#[derive(Debug)]
 pub struct ShortUrlServ {
-    repo: Repo,
+    repo: ShortUrlRepo,
 }
 
 impl ShortUrlServ {
     #[must_use]
-    pub fn new(repo: Repo) -> Self {
+    pub fn new(repo: ShortUrlRepo) -> Self {
         Self { repo }
     }
 

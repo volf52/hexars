@@ -1,14 +1,17 @@
 use crate::{
-    app::short_url_service::ShortUrlServ, db::repos::short_url_repo_sqlx::ShortUrlRepoSqlx,
+    app::short_url_service::ShortUrlServ, infra::db::repos::short_url_repo_sqlx::ShortUrlRepoSqlx,
 };
+use once_cell::sync::OnceCell;
 
+#[derive(Debug)]
 pub struct Container {
     pub short_url: ShortUrlServ,
 }
 
+pub static CONTAINER: OnceCell<Container> = OnceCell::new();
+
 impl Container {
-    #[must_use]
-    pub fn init() -> Self {
+    fn new() -> Self {
         // ---------- Repositories --------------
         let short_url_repo = ShortUrlRepoSqlx::default();
 
@@ -19,4 +22,21 @@ impl Container {
             short_url: short_url_serv,
         }
     }
+
+    pub fn init() {
+        let container = Container::new();
+
+        CONTAINER
+            .set(container)
+            .expect("DI Container already initialized");
+    }
+}
+
+#[macro_export]
+macro_rules! get_container {
+    () => {
+        hexars::infra::di::CONTAINER
+            .get()
+            .expect("CONTAINER not initialized")
+    };
 }

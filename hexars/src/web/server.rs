@@ -1,31 +1,7 @@
 use std::net::SocketAddr;
 
-use axum::{routing::get, Json, Router};
-use hexars::{
-    db::init_db,
-    errors::LoginError,
-    infra::{config::init_config, di},
-};
-use serde::Serialize;
-use tower_http::trace::TraceLayer;
+use hexars::{errors::LoginError, get_container, web};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-
-#[derive(Debug, Serialize)]
-struct HealthStatus {
-    status: String,
-}
-
-impl HealthStatus {
-    pub fn ok() -> Self {
-        Self {
-            status: "ok".to_string(),
-        }
-    }
-}
-
-async fn health() -> Json<HealthStatus> {
-    Json(HealthStatus::ok())
-}
 
 #[tokio::main]
 async fn main() -> color_eyre::Result<()> {
@@ -40,10 +16,8 @@ async fn main() -> color_eyre::Result<()> {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    init_config()?;
-    init_db().await?;
-
-    let container = di::Container::init();
+    let app = web::app::create_app().await?;
+    let container = get_container!();
     let serv = &container.short_url;
 
     let e = serv
@@ -53,13 +27,9 @@ async fn main() -> color_eyre::Result<()> {
 
     println!("Inserted: {:#?}", e);
 
-    let ents = &container.short_url.get_all_urls().await;
+    let ents = container.short_url.get_all_urls().await;
 
     println!("All: {:#?}", ents);
-
-    let app = Router::new()
-        .route("/health", get(health))
-        .layer(TraceLayer::new_for_http()); // can customize
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
     tracing::debug!("Listening on http://localhost:3000");

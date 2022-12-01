@@ -1,6 +1,6 @@
 use crate::domain::{
     base::{BaseEntity, BaseRepo},
-    short_url_entity::{ShortUrl, ShortUrlRepo},
+    short_url_entity::{IShortUrlRepo, ShortUrl},
 };
 
 #[derive(Default, Clone)]
@@ -58,4 +58,4 @@ impl BaseRepo for ShortUrlRepoSqlx {
     // }
 }
 
-impl ShortUrlRepo for ShortUrlRepoSqlx {}
+impl IShortUrlRepo for ShortUrlRepoSqlx {}
