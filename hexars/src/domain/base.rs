@@ -8,7 +8,7 @@ pub enum RepoError {
 
 pub type RepoResult<T> = std::result::Result<T, RepoError>;
 
-#[inline(always)]
+#[inline]
 pub(super) fn gen_id() -> String {
     nanoid!(6)
 }

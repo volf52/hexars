@@ -7,7 +7,7 @@ impl IntoResponse for HttpError {
     fn into_response(self) -> axum::response::Response {
         let err = self.0.to_string();
 
-        return (StatusCode::INTERNAL_SERVER_ERROR, err).into_response();
+        (StatusCode::INTERNAL_SERVER_ERROR, err).into_response()
     }
 }
 //

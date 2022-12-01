@@ -24,7 +24,7 @@ impl Container {
     }
 
     pub fn init() {
-        let container = Container::new();
+        let container = Self::new();
 
         CONTAINER
             .set(container)

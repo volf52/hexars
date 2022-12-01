@@ -2,7 +2,6 @@ use axum::{extract::State, routing::post, Json, Router};
 
 use crate::{
     domain::short_url_entity::ShortUrl,
-    errors::AppError,
     infra::di::{get_container, Container},
     web::response::HttpResult,
 };
@@ -30,21 +29,3 @@ pub fn create_short_url_router() -> axum::Router {
         .route("/", post(shorten_url).get(fetch_all))
         .with_state(container)
 }
-
-// struct SurlServ(ShortUrlServ);
-
-// #[async_trait]
-// impl<S> FromRequestParts<S> for SurlServ
-// where
-//     S: Send + Sync,
-// {
-//     type Rejection = (StatusCode, String);
-//
-//     async fn from_request_parts(_parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
-//         let container = get_container!();
-//
-//         let serv = container.short_url;
-//
-//         Ok(SurlServ(serv))
-//     }
-// }
