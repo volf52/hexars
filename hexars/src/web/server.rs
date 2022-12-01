@@ -1,4 +1,8 @@
-use hexars::{db::init_db, errors::LoginError, infra::di};
+use hexars::{
+    db::init_db,
+    errors::LoginError,
+    infra::{config::init_config, di},
+};
 use poem::{
     get, handler, listener::TcpListener, middleware::Tracing, web::Json, EndpointExt, Route, Server,
 };
@@ -28,23 +32,22 @@ async fn main() -> color_eyre::Result<()> {
     std::env::set_var("RUST_LOG", "poem=debug");
     tracing_subscriber::fmt::init();
 
-    dotenv::dotenv().ok();
-
+    init_config()?;
     init_db().await?;
 
     let container = di::Container::init();
     let serv = &container.short_url;
 
-    // let e = serv
-    //     .create_short_url("https://www.facebook.com".to_string())
-    //     .await
-    //     .map_err(|_| LoginError::MissingDetails)?;
-    //
-    // println!("Inserted: {:#?}", e);
-    //
-    // let ents = &container.short_url.get_all_urls().await;
-    //
-    // println!("All: {:#?}", ents);
+    let e = serv
+        .create_short_url("https://www.facebook.com".to_string())
+        .await
+        .map_err(|_| LoginError::MissingDetails)?;
+
+    println!("Inserted: {:#?}", e);
+
+    let ents = &container.short_url.get_all_urls().await;
+
+    println!("All: {:#?}", ents);
 
     let app = Route::new().at("/health", get(health)).with(Tracing);
 

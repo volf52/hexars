@@ -44,6 +44,8 @@ pub enum ConfigError {
     DatabaseUrlNotFound,
     #[error("Invalid Database Url")]
     InvalidDatabaseUrl,
+    #[error("Already initialized")]
+    AlreadyInitialized,
 }
 
 #[derive(Debug, Error)]

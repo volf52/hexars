@@ -1,22 +1,21 @@
 pub mod repos;
 
 use once_cell::sync::OnceCell;
-use sqlx::{sqlite::SqlitePoolOptions, SqlitePool};
+use sqlx::{postgres::PgPoolOptions, PgPool};
 
 use crate::infra::config;
 
-pub static POOL: OnceCell<SqlitePool> = OnceCell::new();
+pub static POOL: OnceCell<PgPool> = OnceCell::new();
 
 pub async fn init_db() -> color_eyre::Result<()> {
-    let db_url = std::env::var("DATABASE_URL")?;
-    let cfg = config::APP_CONFIG.get().unwrap();
+    let cfg = config::APP_CONFIG.get().expect("Config Not Initialized");
 
-    let pool = SqlitePoolOptions::new()
+    let pool = PgPoolOptions::new()
         .max_connections(2)
-        .connect(&db_url)
+        .connect(&cfg.db_url)
         .await?;
 
-    POOL.set(pool).expect("unable to set POOL");
+    POOL.set(pool).expect("unable to set DB POOL");
 
     Ok(())
 }
