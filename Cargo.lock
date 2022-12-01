@@ -554,6 +554,7 @@ dependencies = [
  "axum",
  "color-eyre",
  "dotenv",
+ "eyre",
  "nanoid",
  "once_cell",
  "serde",

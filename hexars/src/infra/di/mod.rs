@@ -32,11 +32,12 @@ impl Container {
     }
 }
 
-#[macro_export]
 macro_rules! get_container {
     () => {
-        hexars::infra::di::CONTAINER
+        crate::infra::di::CONTAINER
             .get()
             .expect("CONTAINER not initialized")
     };
 }
+
+pub(crate) use get_container;

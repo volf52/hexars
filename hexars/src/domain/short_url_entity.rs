@@ -1,6 +1,6 @@
 use super::base::{gen_id, BaseEntity, BaseRepo};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize)]
 pub struct ShortUrl {
     id: String,
     url: String,

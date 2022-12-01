@@ -1,1 +1,1 @@
-pub type ServiceResult<T> = anyhow::Result<T>;
+pub type ServiceResult<T> = eyre::Result<T>;

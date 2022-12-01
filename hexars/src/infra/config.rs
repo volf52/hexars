@@ -22,3 +22,14 @@ pub fn init_config() -> std::result::Result<(), ConfigError> {
 
     Ok(())
 }
+
+// todo: maybe add import for eyre::Context thing
+macro_rules! get_cfg {
+    () => {
+        crate::infra::config::APP_CONFIG
+            .get()
+            .wrap_err("Config not yet initialized")
+    };
+}
+
+pub(crate) use get_cfg;
