@@ -1,13 +1,13 @@
-use crate::domain::short_url_entity::{ShortUrl, ShortUrlRepo};
+use crate::domain::short_url_entity::{ShortUrl, ShortUrlRepoBox};
 
 #[derive(Debug)]
 pub struct ShortUrlServ {
-    repo: ShortUrlRepo,
+    repo: ShortUrlRepoBox,
 }
 
 impl ShortUrlServ {
     #[must_use]
-    pub fn new(repo: ShortUrlRepo) -> Self {
+    pub fn new(repo: ShortUrlRepoBox) -> Self {
         Self { repo }
     }
 

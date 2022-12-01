@@ -1,3 +1,4 @@
+#![allow(clippy::unused_async)]
 use axum::Json;
 use serde::Serialize;
 

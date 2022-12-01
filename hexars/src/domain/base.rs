@@ -13,7 +13,7 @@ pub trait BaseEntity {
 }
 
 #[async_trait::async_trait]
-pub trait BaseRepo {
+pub trait BaseRepo: std::fmt::Debug {
     type Entity: BaseEntity;
 
     async fn fetch_all(&self) -> Vec<Self::Entity>;
