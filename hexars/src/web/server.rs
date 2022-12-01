@@ -1,12 +1,14 @@
+use std::net::SocketAddr;
+
+use axum::{routing::get, Json, Router};
 use hexars::{
     db::init_db,
     errors::LoginError,
     infra::{config::init_config, di},
 };
-use poem::{
-    get, handler, listener::TcpListener, middleware::Tracing, web::Json, EndpointExt, Route, Server,
-};
 use serde::Serialize;
+use tower_http::trace::TraceLayer;
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 #[derive(Debug, Serialize)]
 struct HealthStatus {
@@ -21,7 +23,6 @@ impl HealthStatus {
     }
 }
 
-#[handler]
 async fn health() -> Json<HealthStatus> {
     Json(HealthStatus::ok())
 }
@@ -29,8 +30,15 @@ async fn health() -> Json<HealthStatus> {
 #[tokio::main]
 async fn main() -> color_eyre::Result<()> {
     color_eyre::install()?;
-    std::env::set_var("RUST_LOG", "poem=debug");
-    tracing_subscriber::fmt::init();
+    std::env::set_var("RUST_LOG", "debug");
+
+    tracing_subscriber::registry()
+        .with(
+            tracing_subscriber::EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| "hexars=debug,tower_http=debug".into()),
+        )
+        .with(tracing_subscriber::fmt::layer())
+        .init();
 
     init_config()?;
     init_db().await?;
@@ -49,10 +57,15 @@ async fn main() -> color_eyre::Result<()> {
 
     println!("All: {:#?}", ents);
 
-    let app = Route::new().at("/health", get(health)).with(Tracing);
+    let app = Router::new()
+        .route("/health", get(health))
+        .layer(TraceLayer::new_for_http()); // can customize
 
-    Server::new(TcpListener::bind("0.0.0.0:3000"))
-        .run(app)
+    let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
+    tracing::debug!("Listening on http://localhost:3000");
+
+    axum::Server::bind(&addr)
+        .serve(app.into_make_service())
         .await?;
 
     Ok(())

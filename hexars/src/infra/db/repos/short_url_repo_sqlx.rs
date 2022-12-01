@@ -6,6 +6,8 @@ use crate::domain::{
 #[derive(Default, Clone)]
 pub struct ShortUrlRepoSqlx;
 
+// Explore request scoped connections - https://github.com/tokio-rs/axum/blob/6c133be5b7561e0de74d2b94dd2b17607ed99028/examples/sqlx-postgres/src/main.rs
+
 #[async_trait::async_trait]
 impl BaseRepo for ShortUrlRepoSqlx {
     type Entity = ShortUrl;
