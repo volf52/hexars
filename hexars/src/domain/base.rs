@@ -1,9 +1,14 @@
 use nanoid::nanoid;
 
 #[derive(Debug, thiserror::Error)]
-#[error("DatabaseError: {0}")]
-pub struct DatabaseError(String);
+pub enum RepoError {
+    #[error("DatabaseError: {0}")]
+    DatabaseError(String),
+}
 
+pub type RepoResult<T> = std::result::Result<T, RepoError>;
+
+#[inline(always)]
 pub(super) fn gen_id() -> String {
     nanoid!(6)
 }
@@ -16,6 +21,7 @@ pub trait BaseEntity {
 pub trait BaseRepo: std::fmt::Debug {
     type Entity: BaseEntity;
 
-    async fn fetch_all(&self) -> Vec<Self::Entity>;
-    async fn insert(&self, ent: &Self::Entity) -> Self::Entity;
+    async fn fetch_all(&self) -> RepoResult<Vec<Self::Entity>>;
+    // todo: maybe change return to unit
+    async fn insert(&self, ent: &Self::Entity) -> RepoResult<Self::Entity>;
 }
