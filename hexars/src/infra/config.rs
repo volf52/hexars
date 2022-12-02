@@ -1,5 +1,5 @@
 use crate::errors::ConfigError;
-use dotenv::dotenv;
+use dotenvy::dotenv;
 use once_cell::sync::OnceCell;
 use std::env;
 
@@ -10,7 +10,13 @@ pub struct Config {
 pub static APP_CONFIG: OnceCell<Config> = OnceCell::new();
 
 pub fn init_config() -> std::result::Result<(), ConfigError> {
-    dotenv().ok();
+    if cfg!(debug_assertions) {
+        tracing::debug!("Loading env from .env.local");
+        dotenvy::from_filename(".env.local").ok();
+    } else {
+        tracing::debug!("Loading env from .env (release)");
+        dotenv().ok();
+    }
 
     let db_url = env::var("DATABASE_URL").map_err(|_| ConfigError::DatabaseUrlNotFound)?;
 
