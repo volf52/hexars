@@ -1,4 +1,5 @@
-FROM volf52/rust-musl-builder:1.65.0-slim as userconfig
+FROM volf52/rust-musl-builder:1.65.0-slim-mold as img
+FROM img as userconfig
 
 ARG USER=hexa
 ARG USERID=10001
@@ -21,7 +22,7 @@ RUN adduser \
 # reset back to user space
 USER volfy:volfy
 
-FROM volf52/rust-musl-builder:1.65.0-slim as base
+FROM img as base
 
 WORKDIR /app
 
