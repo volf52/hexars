@@ -1,3 +1,5 @@
+ARG DB_URL
+
 # FROM lukemathwalker/cargo-chef:0.1.41-rust-1.63-slim-buster as base
 FROM clux/muslrust:stable as base
 
@@ -30,17 +32,18 @@ RUN cargo chef cook --target x86_64-unknown-linux-musl --recipe-path recipe.json
 
 COPY migrations .
 
-RUN cargo build --target x86_64-unknown-linux-musl && /app/target/x86_64-unknown-linux-musl/debug/migrate
+# RUN cargo build --target x86_64-unknown-linux-musl && /app/target/x86_64-unknown-linux-musl/debug/migrate
+RUN cargo build --release --target x86_64-unknown-linux-musl
 
 
 FROM base as hexars
 
-COPY --from=migrate /app/db.sqlite .
+# COPY --from=migrate /app/db.sqlite .
 COPY --from=hexars-recipe /app/recipe.json .
 
 RUN cargo chef cook --target x86_64-unknown-linux-musl --recipe-path recipe.json
 
-COPY .env .
+COPY .env.prod .env
 COPY hexars .
 
 RUN cargo b -r --target x86_64-unknown-linux-musl
@@ -69,12 +72,13 @@ EXPOSE 3000
 COPY --from=tini /bin/tini /bin/tini
 
 # COPY --from=migrate --chown=nonroot:nonroot /app/db.sqlite .
-COPY --from=migrate /app/db.sqlite .
+# COPY --from=migrate /app/db.sqlite .
+COPY --from=migrate /app/target/x86_64-unknown-linux-musl/release/migrate .
 
 # COPY --from=compress --chown=nonroot:nonroot /app/server_minimal ./server
 COPY --from=compress /app/server_minimal ./server
 
 # COPY --chown=nonroot:nonroot .env .
-COPY  .env .
+# COPY  .env .
 
 ENTRYPOINT ["/bin/tini", "--","/app/server"]
