@@ -2,6 +2,7 @@
 .env
 .env.local
 .env.prod
+.env.build
 refinery.toml
 .idea
 .vscode
