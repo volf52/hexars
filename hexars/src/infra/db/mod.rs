@@ -4,7 +4,6 @@ use once_cell::sync::OnceCell;
 use sqlx::{pool::PoolConnection, postgres::PgPoolOptions, PgPool, Postgres};
 
 use crate::infra::config;
-use eyre::ContextCompat;
 
 #[derive(Debug, thiserror::Error)]
 pub enum DBConnectionError {

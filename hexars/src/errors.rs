@@ -46,6 +46,8 @@ pub enum ConfigError {
     InvalidDatabaseUrl,
     #[error("Already initialized")]
     AlreadyInitialized,
+    #[error("Invalid PORT value: {0}")]
+    InvalidPort(String),
 }
 
 #[derive(Debug, Error)]

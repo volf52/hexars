@@ -1,6 +1,6 @@
 use std::net::SocketAddr;
 
-use hexars::web;
+use hexars::{get_cfg, web};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 #[tokio::main]
@@ -17,9 +17,10 @@ async fn main() -> color_eyre::Result<()> {
         .init();
 
     let app = web::app::create_app().await?;
+    let port = get_cfg!()?.port;
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
-    tracing::debug!("Listening on http://localhost:3000");
+    let addr = SocketAddr::from(([0, 0, 0, 0], port));
+    tracing::debug!("Listening on http://localhost:{}", port);
 
     axum::Server::bind(&addr)
         .serve(app.into_make_service())

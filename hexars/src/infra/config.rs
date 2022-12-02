@@ -5,6 +5,7 @@ use std::env;
 
 pub struct Config {
     pub db_url: String,
+    pub port: u16,
 }
 
 pub static APP_CONFIG: OnceCell<Config> = OnceCell::new();
@@ -20,7 +21,12 @@ pub fn init_config() -> std::result::Result<(), ConfigError> {
 
     let db_url = env::var("DATABASE_URL").map_err(|_| ConfigError::DatabaseUrlNotFound)?;
 
-    let cfg = Config { db_url };
+    let port = match env::var("PORT") {
+        Ok(p) => p.parse::<u16>().map_err(|_| ConfigError::InvalidPort(p)),
+        Err(_) => Ok(3000),
+    }?;
+
+    let cfg = Config { db_url, port };
 
     APP_CONFIG
         .set(cfg)
@@ -29,13 +35,15 @@ pub fn init_config() -> std::result::Result<(), ConfigError> {
     Ok(())
 }
 
-// todo: maybe add import for eyre::Context thing
+#[macro_export]
 macro_rules! get_cfg {
-    () => {
-        crate::infra::config::APP_CONFIG
+    () => {{
+        use eyre::ContextCompat;
+
+        $crate::infra::config::APP_CONFIG
             .get()
             .wrap_err("Config not yet initialized")
-    };
+    }};
 }
 
 pub(crate) use get_cfg;
