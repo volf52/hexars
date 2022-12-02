@@ -1,0 +1,2 @@
+[alias]
+migrate = "run --package migrations --"
