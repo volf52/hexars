@@ -1,13 +1,11 @@
 use migrations::embedded;
 
-#[macro_use]
-extern crate dotenv_codegen;
-
 fn main() {
-    let db_url: &str = dotenv!("DATABASE_URL");
+    // dotenvy::dotenv().ok();
+    let db_url = std::env::var("DATABASE_URL").expect("No database url provided");
 
     println!("Connecting to db...");
-    let mut client = postgres::Client::connect(db_url, postgres::NoTls)
+    let mut client = postgres::Client::connect(&db_url, postgres::NoTls)
         .expect("No connection could be established to DB");
     println!("Connected to db");
 
